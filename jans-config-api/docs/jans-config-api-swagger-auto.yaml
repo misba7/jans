@@ -7180,15 +7180,15 @@ components:
           type: string
         adminCanEdit:
           type: boolean
-        userCanView:
-          type: boolean
-        adminCanAccess:
-          type: boolean
-        userCanEdit:
+        userCanAccess:
           type: boolean
         adminCanView:
           type: boolean
-        userCanAccess:
+        adminCanAccess:
+          type: boolean
+        userCanView:
+          type: boolean
+        userCanEdit:
           type: boolean
         whitePagesCanView:
           type: boolean
@@ -7370,14 +7370,24 @@ components:
         idTokenTokenBindingCnf:
           type: string
         clientName:
-          $ref: '#/components/schemas/LocalizedString'
+          type: string
         logoUri:
-          $ref: '#/components/schemas/LocalizedString'
+          type: string
         clientUri:
-          $ref: '#/components/schemas/LocalizedString'
+          type: string
         policyUri:
-          $ref: '#/components/schemas/LocalizedString'
+          type: string
         tosUri:
+          type: string
+        clientNameLocalized:
+          $ref: '#/components/schemas/LocalizedString'
+        logoUriLocalized:
+          $ref: '#/components/schemas/LocalizedString'
+        clientUriLocalized:
+          $ref: '#/components/schemas/LocalizedString'
+        policyUriLocalized:
+          $ref: '#/components/schemas/LocalizedString'
+        tosUriLocalized:
           $ref: '#/components/schemas/LocalizedString'
         jwksUri:
           type: string
@@ -8333,6 +8343,15 @@ components:
           $ref: '#/components/schemas/EngineConfig'
         ssaConfiguration:
           $ref: '#/components/schemas/SsaConfiguration'
+        allResponseTypesSupported:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+            enum:
+            - code
+            - token
+            - id_token
         fapi:
           type: boolean
         enabledFeatureFlags:
@@ -8362,15 +8381,6 @@ components:
             - STAT
             - PAR
             - SSA
-        allResponseTypesSupported:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
-            enum:
-            - code
-            - token
-            - id_token
     AuthenticationFilter:
       required:
       - baseDn
