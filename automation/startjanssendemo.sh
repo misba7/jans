@@ -202,8 +202,8 @@ sudo helm repo add janssen https://docs.jans.io/charts
 sudo helm repo update
 sudo helm install janssen janssen/janssen -n jans -f override.yaml --kubeconfig="$KUBECONFIG" --version="$JANS_VERSION"
 
-wait_for_services jans-config-api/api/v1/health/ready
-wait_for_services jans-scim/sys/health-check
+#wait_for_services jans-config-api/api/v1/health/ready
+#wait_for_services jans-scim/sys/health-check
 
 cat << EOF > testendpoints.sh
 sudo microk8s config > config
@@ -217,6 +217,7 @@ echo -e "Testing fido2-configuration endpoint.. \n"
 curl -k https://$JANS_FQDN/.well-known/fido2-configuration
 cd ..
 EOF
-sudo microk8s.kubectl -n jans wait --for=condition=available --timeout=300s deploy/janssen-auth-server --kubeconfig="$KUBECONFIG" || echo "Couldn't find deployment running tests anyways..."
+#sudo microk8s.kubectl -n jans wait --for=condition=available --timeout=300s deploy/janssen-auth-server --kubeconfig="$KUBECONFIG" || echo "Couldn't find deployment running tests anyways..."
+sleep 360
 sudo bash testendpoints.sh
 echo -e "You may re-execute bash testendpoints.sh to do a quick test to check the openid-configuration endpoint."
