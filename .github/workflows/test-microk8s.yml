@@ -13,6 +13,10 @@ on:
       - "charts/**"
       - "automation/startjanssendemo.sh"
   workflow_dispatch:
+      jans_version:
+        description: 'Janssen helm chart version'
+        required: true
+        default: '0.0.0-nightly'
 permissions:
   contents: read
 
@@ -34,10 +38,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
-    - name: Test setup
+    - name: Test dev setup
       id: start_up_script
       run: |
           ip=$(curl ipinfo.io/ip)
           chmod u+x automation/startjanssendemo.sh
-          sudo bash ./automation/startjanssendemo.sh demoexample.jans.io ${{ matrix.persistence-backends }} "" $ip true ${{ matrix.istio }} 
+          JANS_VERSION=${{ github.event.inputs.jans_version }}
+          sudo bash ./automation/startjanssendemo.sh demoexample.jans.io ${{ matrix.persistence-backends }} $JANS_VERSION $ip true ${{ matrix.istio }} 
           sudo bash ./automation/analyze_test_microk8s_setup.sh "${{ secrets.MOAUTO_ROCKETCHAT_TOKEN }}" "${{ secrets.MOAUTO_ROCKETCHAT_ID }}" ${{ matrix.persistence-backends }}
