@@ -21,11 +21,9 @@ if [[ $JANS_PERSISTENCE != "MYSQL" ]] && [[ $JANS_PERSISTENCE != "PGSQL" ]]; the
   echo "[E] Incorrect entry. Please enter either MYSQL or PGSQL"
   exit 1
 fi
-
 if [[ -z $JANS_VERSION ]]; then
   JANS_VERSION="0.0.0-nightly"
 fi
-
 LOG_TARGET="FILE"
 LOG_LEVEL="TRACE"
 if [[ -z $JANS_CI_CD_RUN ]]; then
@@ -38,10 +36,19 @@ if [[ -z $EXT_IP ]]; then
 fi
 
 sudo apt-get update
+sudo pip3 install requests --upgrade
+sudo pip3 install shiv
 sudo snap install microk8s --classic
 sudo microk8s.status --wait-ready
 sudo microk8s.enable dns registry ingress hostpath-storage helm3
 sudo microk8s kubectl get daemonset.apps/nginx-ingress-microk8s-controller -n ingress -o yaml | sed -s "s@ingress-class=public@ingress-class=nginx@g" | microk8s kubectl apply -f -
+sudo apt-get update
+sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common -y
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt-get update
+sudo apt-get install net-tools
+sudo apt-get install docker-ce docker-ce-cli containerd.io -y
 sudo microk8s config | sudo tee ~/.kube/config > /dev/null
 sudo snap alias microk8s.kubectl kubectl
 sudo snap alias microk8s.helm3 helm
@@ -171,18 +178,18 @@ EOF
 sudo helm repo add janssen https://docs.jans.io/charts
 sudo helm repo update
 sudo helm install janssen janssen/janssen -n jans -f override.yaml --kubeconfig="$KUBECONFIG" --version="$JANS_VERSION"
-
 cat << EOF > testendpoints.sh
 sudo microk8s config > config
 KUBECONFIG="$PWD"/config
-echo -e "Testing openid-configuration endpoint.. \n"
-curl -k https://$JANS_FQDN/.well-known/openid-configuration
+echo "Waiting for Janssen to come up. Please do not cancel out. This can take up to 5 minutes."
+sudo microk8s.kubectl -n jans wait --for=condition=available --timeout=300s deploy/janssen-auth-server --kubeconfig="$KUBECONFIG" || echo "Couldn't find deployment running tests anyways..."
 echo -e "Testing scim-configuration endpoint.. \n"
 curl -k https://$JANS_FQDN/.well-known/scim-configuration
 echo -e "Testing fido2-configuration endpoint.. \n"
 curl -k https://$JANS_FQDN/.well-known/fido2-configuration
+echo -e "Testing openid-configuration endpoint.. \n"
+curl -k https://$JANS_FQDN/.well-known/openid-configuration
+cd ..
 EOF
-echo "Waiting for Janssen to come up. Please do not cancel out. This can take ~5 minutes."
-sudo microk8s.kubectl -n jans wait --for=condition=available --timeout=300s deploy/janssen-auth-server --kubeconfig="$KUBECONFIG" || echo "Couldn't find deployment running tests anyways..."
 sudo bash testendpoints.sh
 echo -e "You may re-execute the command 'bash testendpoints.sh' to do a quick test to check the openid-configuration endpoint."
