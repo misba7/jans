@@ -6,11 +6,6 @@ JANS_VERSION=$3
 EXT_IP=$4
 JANS_CI_CD_RUN=$5
 INSTALL_ISTIO=$6
-echo "JANS VERSION:"
-echo $JANS_VERSION
-echo "EXT_IP:"
-echo $EXT_IP
-
 if [[ ! "$JANS_FQDN" ]]; then
   read -rp "Enter Hostname [demoexample.jans.io]:                           " JANS_FQDN
 fi
