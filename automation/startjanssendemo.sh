@@ -36,6 +36,8 @@ if [[ -z $EXT_IP ]]; then
 fi
 
 sudo apt-get update
+sudo apt-get install python3-pip -y
+sudo pip3 install pip --upgrade
 sudo pip3 install requests --upgrade
 sudo pip3 install shiv
 sudo snap install microk8s --classic
@@ -190,6 +192,6 @@ curl -k https://$JANS_FQDN/.well-known/fido2-configuration
 cd ..
 EOF
 echo "Waiting for Janssen to come up. Please do not cancel out. This can take up to 5 minutes."
-sudo microk8s.kubectl -n jans wait --for=condition=available --timeout=300s deploy/janssen-auth-server --kubeconfig="$KUBECONFIG" || echo "Couldn't find deployment running tests anyways..."
+sudo microk8s.kubectl -n jans wait --for=condition=available --timeout=300s deploy/janssen-auth-server --kubeconfig="$KUBECONFIG" || echo "auth-server deployment is not ready. Running tests anyways..."
 sudo bash testendpoints.sh
 echo -e "You may re-execute the command 'bash testendpoints.sh' to do a quick test to check the openid-configuration endpoint."
