@@ -37,7 +37,6 @@ fi
 
 sudo apt-get update
 sudo apt-get install python3-pip -y
-sudo pip3 install pip --upgrade
 sudo pip3 install requests --upgrade
 sudo pip3 install shiv
 sudo snap install microk8s --classic
