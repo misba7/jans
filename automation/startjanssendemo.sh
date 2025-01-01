@@ -11,7 +11,7 @@ if [[ ! "$JANS_FQDN" ]]; then
 fi
 if ! [[ $JANS_FQDN == *"."*"."* ]]; then
   echo "[E] Hostname provided is invalid or empty.
-    Please enter a FQDN with the format demoexample.jans.io"
+    Please enter an FQDN with the format demoexample.jans.io"
   exit 1
 fi
 if [[ ! "$JANS_PERSISTENCE" ]]; then
