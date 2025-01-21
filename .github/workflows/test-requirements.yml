@@ -25,9 +25,7 @@ on:
         description: 'Version tag (e.g."v1.1.6")'
         default: "nightly"
         required: false
-concurrency:
-  group: run-once
-  cancel-in-progress: false
+
 permissions:
   contents: read
 
