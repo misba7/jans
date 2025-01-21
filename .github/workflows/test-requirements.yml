@@ -1,4 +1,4 @@
-name: Test requirements
+name: Publish docs via GitHub Pages
 on:
   push:
     branches:
@@ -16,16 +16,12 @@ on:
       - 'charts/**'
       - 'mkdocs.yml'
       - 'docker-jans-**/README.md'
-  release:
-    types:
-      - published
   workflow_dispatch:
     inputs:
       version:
         description: 'Version tag (e.g."v1.1.6")'
         default: "nightly"
         required: false
-
 permissions:
   contents: read
 
@@ -33,7 +29,6 @@ jobs:
   build:
     permissions:
       contents: write  # for Git to git push
-    if: github.repository == 'JanssenProject/jans'
     name: Deploy docs
     runs-on: ubuntu-latest
     steps:
