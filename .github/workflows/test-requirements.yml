@@ -1,4 +1,4 @@
-name: Publish docs via GitHub Pages
+name: Test requirements
 on:
   push:
     branches:
@@ -27,8 +27,6 @@ permissions:
 
 jobs:
   build:
-    permissions:
-      contents: write  # for Git to git push
     name: Deploy docs
     runs-on: ubuntu-latest
     steps:
